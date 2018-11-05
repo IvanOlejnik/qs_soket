@@ -1,45 +1,48 @@
 <!doctype html>
 <html>
-  <head>
+<head>
     <title>Отправка и получение данных</title>
-  </head>
-  <body>
-    
+</head>
+<body>
     <form id="forminp" action="">
-      Ключ <input id="key" autocomplete="off" />
-      <br><br>
-      Сообщение <input id="data" autocomplete="off" />
-      <br><br>
-      <button>Send</button>
+        Ключ <input id="key" autocomplete="off" />
+        <br><br>
+        Сообщение <input id="data" autocomplete="off" />
+        <br><br>
+        <button>Send</button>
     </form>
-	<br><br>
+    <br><br>
     <form id="formoutp" action="">
-      Ключ <input id="keysech" autocomplete="off" />
-      <button>Send</button>
+        Ключ <input id="keysech" autocomplete="off" />
+        <button>Send</button>
     </form>
     <br>
-	<ul id="messages"></ul>
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.3/socket.io.js"></script>
-	<script src="https://code.jquery.com/jquery-1.11.1.js"></script>
-	<script>
-	  $(function () {
-	    var socket = io();
-	    $('#forminp').submit(function(){
-	      var params = { "data" : $('#data').val(), "key" : $('#key').val()};
-	      socket.emit('sending data', params);
-	      $('#data').val('');
-	      $('#key').val('');
-	      return false;
-	    });
-	    $('#formoutp').submit(function(){
-	      socket.emit('request data', $('#keysech').val());
-	      $('#keysech').val('');
-	      return false;
-	    });
-	    socket.on('return data', function(msg){
-	      $('#messages').append($('<li>').text('Ключ: ' + msg['key'] + ' Данные: ' + msg['data']));
-	    });
-	  });
-	</script>
-  </body>
+    <ul id="messages"></ul>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.3/socket.io.js"></script>
+    <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
+    <script>
+        $(function () {
+            var socket = io();
+            $('#forminp').submit(function(){
+                var params = { "data" : $('#data').val(), "key" : $('#key').val()};
+                socket.emit('sending data', params);
+                $('#data').val('');
+                $('#key').val('');
+                return false;
+            });
+            $('#formoutp').submit(function(){
+                socket.emit('request data', $('#keysech').val());
+                $('#keysech').val('');
+                return false;
+            });
+            socket.on('return data', function(msg){
+                if(msg){
+                    $('#messages').append($('<li>').text('Ключ: ' + msg['key'] + ' Данные: ' + msg['data'][0] + ' Данные удаляться в ' + msg['time']));
+                }else{
+                    $('#messages').append($('<li>').text('Данные не существуют, или удалены'));
+                }
+            });
+        });
+    </script>
+</body>
 </html>
